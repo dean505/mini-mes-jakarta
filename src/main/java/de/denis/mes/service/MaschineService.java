@@ -21,8 +21,38 @@ public class MaschineService {
         return maschine;
     }
 
-
     public List<Maschine> alleFinden() {
         return maschineRepository.alleFinden();
+    }
+
+    @Transactional
+    public Maschine aktualisieren(Long id,
+                                  String name,
+                                  MaschinenStatus status) {
+
+        Maschine maschine = maschineRepository.nachIdFinden(id);
+
+        if (maschine == null) {
+            return null;
+        }
+
+        maschine.setName(name);
+        maschine.setStatus(status);
+
+        return maschineRepository.aktualisieren(maschine);
+    }
+
+    @Transactional
+    public boolean loeschen(Long id) {
+
+        Maschine maschine = maschineRepository.nachIdFinden(id);
+
+        if (maschine == null) {
+            return false;
+        }
+
+        maschineRepository.loeschen(maschine);
+
+        return true;
     }
 }

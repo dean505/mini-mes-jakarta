@@ -13,6 +13,9 @@ import de.denis.mes.dto.MaschineErstellenRequest;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.DELETE;
 
 @Path("/maschinen")
 public class MaschineResource {
@@ -40,6 +43,42 @@ public class MaschineResource {
                 .status(Response.Status.CREATED)
                 .entity(maschine)
                 .build();
+    }
+
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response maschineAktualisieren(
+            @PathParam("id") Long id,
+            MaschineErstellenRequest request) {
+
+        Maschine maschine =
+                maschineService.aktualisieren(
+                        id,
+                        request.getName(),
+                        request.getStatus());
+
+        if (maschine == null) {
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .build();
+        }
+
+        return Response.ok(maschine).build();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public Response maschineLoeschen(@PathParam("id") Long id) {
+
+        boolean geloescht = maschineService.loeschen(id);
+
+        if (!geloescht) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        return Response.noContent().build();
     }
 
 

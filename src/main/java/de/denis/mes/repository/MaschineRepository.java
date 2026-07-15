@@ -16,10 +16,21 @@ public class MaschineRepository {
         entityManager.persist(maschine);
     }
 
-
     public List<Maschine> alleFinden() {
         return entityManager
                 .createQuery("SELECT m FROM Maschine m ORDER BY m.id", Maschine.class)
                 .getResultList();
+    }
+
+    public Maschine nachIdFinden(Long id) {
+        return entityManager.find(Maschine.class, id);
+    }
+
+    public Maschine aktualisieren(Maschine maschine) {
+        return entityManager.merge(maschine);
+    }
+
+    public void loeschen(Maschine maschine) {
+        entityManager.remove(maschine);
     }
 }
