@@ -1,5 +1,6 @@
 package de.denis.mes.service;
 
+import de.denis.mes.dto.MaschineResponse;
 import de.denis.mes.entity.Maschine;
 import de.denis.mes.entity.MaschinenStatus;
 import de.denis.mes.repository.MaschineRepository;
@@ -15,20 +16,26 @@ public class MaschineService {
     private MaschineRepository maschineRepository;
 
     @Transactional
-    public Maschine erstellen(String name, MaschinenStatus status) {
+    public MaschineResponse erstellen(String name, MaschinenStatus status) {
         Maschine maschine = new Maschine(name, status);
         maschineRepository.speichern(maschine);
-        return maschine;
+
+        return toResponse(maschine);
     }
 
-    public List<Maschine> alleFinden() {
-        return maschineRepository.alleFinden();
+    public List<MaschineResponse> alleFinden() {
+        return maschineRepository
+                .alleFinden()
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     @Transactional
-    public Maschine aktualisieren(Long id,
-                                  String name,
-                                  MaschinenStatus status) {
+    public MaschineResponse aktualisieren(
+            Long id,
+            String name,
+            MaschinenStatus status) {
 
         Maschine maschine = maschineRepository.nachIdFinden(id);
 
@@ -39,7 +46,10 @@ public class MaschineService {
         maschine.setName(name);
         maschine.setStatus(status);
 
-        return maschineRepository.aktualisieren(maschine);
+        Maschine aktualisierteMaschine =
+                maschineRepository.aktualisieren(maschine);
+
+        return toResponse(aktualisierteMaschine);
     }
 
     @Transactional
@@ -54,5 +64,25 @@ public class MaschineService {
         maschineRepository.loeschen(maschine);
 
         return true;
+    }
+
+    private MaschineResponse toResponse(Maschine maschine) {
+
+        return new MaschineResponse(
+                maschine.getId(),
+                maschine.getName(),
+                maschine.getStatus()
+        );
+    }
+
+    public MaschineResponse nachIdFinden(Long id) {
+
+        Maschine maschine = maschineRepository.nachIdFinden(id);
+
+        if (maschine == null) {
+            return null;
+        }
+
+        return toResponse(maschine);
     }
 }

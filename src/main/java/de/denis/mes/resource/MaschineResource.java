@@ -1,9 +1,9 @@
 package de.denis.mes.resource;
 
 import de.denis.mes.entity.Maschine;
-import de.denis.mes.entity.MaschinenStatus;
 import de.denis.mes.service.MaschineService;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -16,6 +16,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.DELETE;
+import de.denis.mes.dto.MaschineResponse;
 
 @Path("/maschinen")
 public class MaschineResource {
@@ -25,16 +26,16 @@ public class MaschineResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Maschine> alleMaschinen() {
+    public List<MaschineResponse> alleMaschinen() {
         return maschineService.alleFinden();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response maschineErstellen(MaschineErstellenRequest request) {
+    public Response maschineErstellen( @Valid MaschineErstellenRequest request) {
 
-        Maschine maschine = maschineService.erstellen(
+        MaschineResponse maschine = maschineService.erstellen(
                 request.getName(),
                 request.getStatus()
         );
@@ -51,21 +52,38 @@ public class MaschineResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response maschineAktualisieren(
             @PathParam("id") Long id,
-            MaschineErstellenRequest request) {
+            @Valid MaschineErstellenRequest request) {
 
-        Maschine maschine =
-                maschineService.aktualisieren(
-                        id,
-                        request.getName(),
-                        request.getStatus());
+        MaschineResponse response = maschineService.aktualisieren(
+                id,
+                request.getName(),
+                request.getStatus()
+        );
 
-        if (maschine == null) {
+        if (response == null) {
             return Response
                     .status(Response.Status.NOT_FOUND)
                     .build();
         }
 
-        return Response.ok(maschine).build();
+        return Response.ok(response).build();
+    }
+
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response maschineNachId(@PathParam("id") Long id) {
+
+        MaschineResponse response =
+                maschineService.nachIdFinden(id);
+
+        if (response == null) {
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .build();
+        }
+
+        return Response.ok(response).build();
     }
 
     @DELETE

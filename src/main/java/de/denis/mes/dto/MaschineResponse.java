@@ -1,20 +1,27 @@
 package de.denis.mes.dto;
 
 import de.denis.mes.entity.MaschinenStatus;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
-public class MaschineErstellenRequest {
+public class MaschineResponse {
 
-    @NotBlank(message = "Der Maschinenname darf nicht leer sein.")
-    @Size(max = 100, message = "Der Maschinenname darf maximal 100 Zeichen haben.")
+    private Long id;
     private String name;
-
-    @NotNull(message = "Der Status muss angegeben werden.")
     private MaschinenStatus status;
 
-    public MaschineErstellenRequest() {
+    public MaschineResponse() {
+    }
+
+    public MaschineResponse(Long id,
+                            String name,
+                            MaschinenStatus status) {
+
+        this.id = id;
+        this.name = name;
+        this.status = status;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
@@ -23,6 +30,10 @@ public class MaschineErstellenRequest {
 
     public MaschinenStatus getStatus() {
         return status;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setName(String name) {
