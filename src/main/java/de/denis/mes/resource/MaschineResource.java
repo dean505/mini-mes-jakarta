@@ -9,29 +9,38 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import java.util.List;
+import de.denis.mes.dto.MaschineErstellenRequest;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.core.Response;
 
-@Path("/maschine")
+@Path("/maschinen")
 public class MaschineResource {
 
     @Inject
     private MaschineService maschineService;
 
     @GET
-    @Path("/create")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String createMaschine() {
-
-        Maschine maschine =
-                new Maschine("Laser 1", MaschinenStatus.LAEUFT);
-
-        maschineService.speichern(maschine);
-
-        return "Maschine gespeichert!";
-    }
-
-    @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Maschine> alleMaschinen() {
         return maschineService.alleFinden();
     }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response maschineErstellen(MaschineErstellenRequest request) {
+
+        Maschine maschine = maschineService.erstellen(
+                request.getName(),
+                request.getStatus()
+        );
+
+        return Response
+                .status(Response.Status.CREATED)
+                .entity(maschine)
+                .build();
+    }
+
+
 }

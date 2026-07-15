@@ -1,6 +1,7 @@
 package de.denis.mes.service;
 
 import de.denis.mes.entity.Maschine;
+import de.denis.mes.entity.MaschinenStatus;
 import de.denis.mes.repository.MaschineRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -14,8 +15,10 @@ public class MaschineService {
     private MaschineRepository maschineRepository;
 
     @Transactional
-    public void speichern(Maschine maschine) {
+    public Maschine erstellen(String name, MaschinenStatus status) {
+        Maschine maschine = new Maschine(name, status);
         maschineRepository.speichern(maschine);
+        return maschine;
     }
 
 
