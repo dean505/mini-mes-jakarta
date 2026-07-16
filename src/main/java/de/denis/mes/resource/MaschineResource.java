@@ -35,6 +35,8 @@ public class MaschineResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response maschineErstellen( @Valid MaschineErstellenRequest request) {
 
+//        throw new RuntimeException("Test");
+
         MaschineResponse maschine = maschineService.erstellen(
                 request.getName(),
                 request.getStatus()
@@ -44,6 +46,8 @@ public class MaschineResource {
                 .status(Response.Status.CREATED)
                 .entity(maschine)
                 .build();
+
+
     }
 
     @PUT
