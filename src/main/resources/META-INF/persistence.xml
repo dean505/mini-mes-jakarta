@@ -13,11 +13,12 @@
         <jta-data-source>java:/jdbc/MiniMesDS</jta-data-source>
 
         <class>de.denis.mes.entity.Maschine</class>
+        <class>de.denis.mes.entity.Auftrag</class>
 
         <properties>
             <property
                     name="jakarta.persistence.schema-generation.database.action"
-                    value="create"/>
+                    value="drop-and-create"/>
         </properties>
 
     </persistence-unit>
