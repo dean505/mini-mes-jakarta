@@ -10,6 +10,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
+import java.util.List;
+
 @ApplicationScoped
 public class AuftragService {
 
@@ -41,6 +43,55 @@ public class AuftragService {
         entityManager.persist(auftrag);
 
         return erstelleResponse(auftrag);
+    }
+
+    public List<AuftragResponse> findeAlle() {
+
+        List<Auftrag> auftraege = entityManager
+                .createQuery(
+                        "SELECT a FROM Auftrag a ORDER BY a.id",
+                        Auftrag.class
+                )
+                .getResultList();
+
+        return auftraege.stream()
+                .map(this::erstelleResponse)
+                .toList();
+    }
+
+    public AuftragResponse findeNachId(Long id) {
+
+        Auftrag auftrag = entityManager.find(
+                Auftrag.class,
+                id
+        );
+
+        if (auftrag == null) {
+            throw new ResourceNotFoundException(
+                    Auftrag.class.getSimpleName(),
+                    id
+            );
+        }
+
+        return erstelleResponse(auftrag);
+    }
+
+    @Transactional
+    public void loeschen(Long id) {
+
+        Auftrag auftrag = entityManager.find(
+                Auftrag.class,
+                id
+        );
+
+        if (auftrag == null) {
+            throw new ResourceNotFoundException(
+                    Auftrag.class.getSimpleName(),
+                    id
+            );
+        }
+
+        entityManager.remove(auftrag);
     }
 
     private AuftragResponse erstelleResponse(Auftrag auftrag) {
