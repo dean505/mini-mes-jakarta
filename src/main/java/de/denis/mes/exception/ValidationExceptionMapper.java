@@ -1,4 +1,4 @@
-package de.denis.mes.config;
+package de.denis.mes.exception;
 
 import de.denis.mes.dto.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;

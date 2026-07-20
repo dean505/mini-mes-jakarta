@@ -8,6 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import de.denis.mes.exception.ResourceNotFoundException;
 
 @ApplicationScoped
 public class MaschineService {
@@ -40,7 +41,7 @@ public class MaschineService {
         Maschine maschine = maschineRepository.nachIdFinden(id);
 
         if (maschine == null) {
-            return null;
+            throw new ResourceNotFoundException("Maschine", id);
         }
 
         maschine.setName(name);
@@ -53,17 +54,15 @@ public class MaschineService {
     }
 
     @Transactional
-    public boolean loeschen(Long id) {
+    public void loeschen(Long id) {
 
         Maschine maschine = maschineRepository.nachIdFinden(id);
 
         if (maschine == null) {
-            return false;
+            throw new ResourceNotFoundException("Maschine", id);
         }
 
         maschineRepository.loeschen(maschine);
-
-        return true;
     }
 
     private MaschineResponse toResponse(Maschine maschine) {
@@ -80,7 +79,7 @@ public class MaschineService {
         Maschine maschine = maschineRepository.nachIdFinden(id);
 
         if (maschine == null) {
-            return null;
+            throw new ResourceNotFoundException("Maschine", id);
         }
 
         return toResponse(maschine);

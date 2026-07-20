@@ -1,6 +1,5 @@
 package de.denis.mes.resource;
 
-import de.denis.mes.entity.Maschine;
 import de.denis.mes.service.MaschineService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -35,8 +34,6 @@ public class MaschineResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response maschineErstellen( @Valid MaschineErstellenRequest request) {
 
-//        throw new RuntimeException("Test");
-
         MaschineResponse maschine = maschineService.erstellen(
                 request.getName(),
                 request.getStatus()
@@ -58,17 +55,12 @@ public class MaschineResource {
             @PathParam("id") Long id,
             @Valid MaschineErstellenRequest request) {
 
-        MaschineResponse response = maschineService.aktualisieren(
-                id,
-                request.getName(),
-                request.getStatus()
-        );
-
-        if (response == null) {
-            return Response
-                    .status(Response.Status.NOT_FOUND)
-                    .build();
-        }
+        MaschineResponse response =
+                maschineService.aktualisieren(
+                        id,
+                        request.getName(),
+                        request.getStatus()
+                );
 
         return Response.ok(response).build();
     }
@@ -76,29 +68,18 @@ public class MaschineResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response maschineNachId(@PathParam("id") Long id) {
+    public MaschineResponse maschineNachId(
+            @PathParam("id") Long id) {
 
-        MaschineResponse response =
-                maschineService.nachIdFinden(id);
-
-        if (response == null) {
-            return Response
-                    .status(Response.Status.NOT_FOUND)
-                    .build();
-        }
-
-        return Response.ok(response).build();
+        return maschineService.nachIdFinden(id);
     }
 
     @DELETE
     @Path("/{id}")
-    public Response maschineLoeschen(@PathParam("id") Long id) {
+    public Response maschineLoeschen(
+            @PathParam("id") Long id) {
 
-        boolean geloescht = maschineService.loeschen(id);
-
-        if (!geloescht) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+        maschineService.loeschen(id);
 
         return Response.noContent().build();
     }

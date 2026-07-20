@@ -1,4 +1,4 @@
-package de.denis.mes.config;
+package de.denis.mes.exception;
 
 import de.denis.mes.dto.ErrorResponse;
 import jakarta.ws.rs.core.MediaType;
@@ -7,7 +7,6 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
 import java.util.List;
-import java.util.Map;
 
 @Provider
 public class GlobalExceptionMapper
