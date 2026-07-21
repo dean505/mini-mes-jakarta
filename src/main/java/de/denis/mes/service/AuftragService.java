@@ -5,9 +5,10 @@ import de.denis.mes.dto.AuftragResponse;
 import de.denis.mes.entity.Auftrag;
 import de.denis.mes.entity.Maschine;
 import de.denis.mes.exception.ResourceNotFoundException;
+import de.denis.mes.repository.AuftragRepository;
+import de.denis.mes.repository.MaschineRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
@@ -15,16 +16,19 @@ import java.util.List;
 @ApplicationScoped
 public class AuftragService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Inject
+    private AuftragRepository auftragRepository;
+
+    @Inject
+    private MaschineRepository maschineRepository;
 
     @Transactional
     public AuftragResponse erstellen(AuftragErstellenRequest request) {
 
-        Maschine maschine = entityManager.find(
-                Maschine.class,
-                request.getMaschineId()
-        );
+        Maschine maschine =
+                maschineRepository.nachIdFinden(
+                        request.getMaschineId()
+                );
 
         if (maschine == null) {
             throw new ResourceNotFoundException(
@@ -40,19 +44,15 @@ public class AuftragService {
         auftrag.setStatus(request.getStatus());
         auftrag.setMaschine(maschine);
 
-        entityManager.persist(auftrag);
+        auftragRepository.speichern(auftrag);
 
         return erstelleResponse(auftrag);
     }
 
     public List<AuftragResponse> findeAlle() {
 
-        List<Auftrag> auftraege = entityManager
-                .createQuery(
-                        "SELECT a FROM Auftrag a ORDER BY a.id",
-                        Auftrag.class
-                )
-                .getResultList();
+        List<Auftrag> auftraege =
+                auftragRepository.alleFinden();
 
         return auftraege.stream()
                 .map(this::erstelleResponse)
@@ -61,10 +61,8 @@ public class AuftragService {
 
     public AuftragResponse findeNachId(Long id) {
 
-        Auftrag auftrag = entityManager.find(
-                Auftrag.class,
-                id
-        );
+        Auftrag auftrag =
+                auftragRepository.nachIdFinden(id);
 
         if (auftrag == null) {
             throw new ResourceNotFoundException(
@@ -79,10 +77,8 @@ public class AuftragService {
     @Transactional
     public void loeschen(Long id) {
 
-        Auftrag auftrag = entityManager.find(
-                Auftrag.class,
-                id
-        );
+        Auftrag auftrag =
+                auftragRepository.nachIdFinden(id);
 
         if (auftrag == null) {
             throw new ResourceNotFoundException(
@@ -91,7 +87,43 @@ public class AuftragService {
             );
         }
 
-        entityManager.remove(auftrag);
+        auftragRepository.loeschen(auftrag);
+    }
+
+    @Transactional
+    public AuftragResponse aktualisieren(
+            Long id,
+            AuftragErstellenRequest request
+    ) {
+
+        Auftrag auftrag =
+                auftragRepository.nachIdFinden(id);
+
+        if (auftrag == null) {
+            throw new ResourceNotFoundException(
+                    Auftrag.class.getSimpleName(),
+                    id
+            );
+        }
+
+        Maschine maschine =
+                maschineRepository.nachIdFinden(
+                        request.getMaschineId()
+                );
+
+        if (maschine == null) {
+            throw new ResourceNotFoundException(
+                    Maschine.class.getSimpleName(),
+                    request.getMaschineId()
+            );
+        }
+
+        auftrag.setBezeichnung(request.getBezeichnung());
+        auftrag.setStueckzahl(request.getStueckzahl());
+        auftrag.setStatus(request.getStatus());
+        auftrag.setMaschine(maschine);
+
+        return erstelleResponse(auftrag);
     }
 
     private AuftragResponse erstelleResponse(Auftrag auftrag) {

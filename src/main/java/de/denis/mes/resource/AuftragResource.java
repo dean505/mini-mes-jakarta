@@ -57,6 +57,21 @@ public class AuftragResource {
                 .build();
     }
 
+    @PUT
+    @Path("/{id}")
+    public Response aktualisieren(
+            @PathParam("id") Long id,
+            @Valid AuftragErstellenRequest request
+    ) {
+
+        AuftragResponse response =
+                auftragService.aktualisieren(id, request);
+
+        return Response
+                .ok(response)
+                .build();
+    }
+
     @DELETE
     @Path("/{id}")
     public Response loeschen(
