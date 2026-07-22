@@ -1,9 +1,11 @@
 package de.denis.mes.repository;
 
 import de.denis.mes.entity.Auftrag;
+import de.denis.mes.entity.AuftragsStatus;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
@@ -17,17 +19,43 @@ public class AuftragRepository {
         entityManager.persist(auftrag);
     }
 
-    public List<Auftrag> alleFinden() {
-        return entityManager
-                .createQuery(
-                        "SELECT a FROM Auftrag a ORDER BY a.id",
-                        Auftrag.class
-                )
-                .getResultList();
-    }
-
     public Auftrag nachIdFinden(Long id) {
         return entityManager.find(Auftrag.class, id);
+    }
+
+    public List<Auftrag> filtern(
+            AuftragsStatus status,
+            Long maschineId
+    ) {
+
+        StringBuilder jpql = new StringBuilder(
+                "SELECT a FROM Auftrag a WHERE 1 = 1"
+        );
+
+        if (status != null) {
+            jpql.append(" AND a.status = :status");
+        }
+
+        if (maschineId != null) {
+            jpql.append(" AND a.maschine.id = :maschineId");
+        }
+
+        jpql.append(" ORDER BY a.id");
+
+        TypedQuery<Auftrag> query = entityManager.createQuery(
+                jpql.toString(),
+                Auftrag.class
+        );
+
+        if (status != null) {
+            query.setParameter("status", status);
+        }
+
+        if (maschineId != null) {
+            query.setParameter("maschineId", maschineId);
+        }
+
+        return query.getResultList();
     }
 
     public void loeschen(Auftrag auftrag) {

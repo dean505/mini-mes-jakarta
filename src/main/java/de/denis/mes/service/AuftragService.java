@@ -3,6 +3,7 @@ package de.denis.mes.service;
 import de.denis.mes.dto.AuftragErstellenRequest;
 import de.denis.mes.dto.AuftragResponse;
 import de.denis.mes.entity.Auftrag;
+import de.denis.mes.entity.AuftragsStatus;
 import de.denis.mes.entity.Maschine;
 import de.denis.mes.exception.ResourceNotFoundException;
 import de.denis.mes.repository.AuftragRepository;
@@ -47,16 +48,6 @@ public class AuftragService {
         auftragRepository.speichern(auftrag);
 
         return erstelleResponse(auftrag);
-    }
-
-    public List<AuftragResponse> findeAlle() {
-
-        List<Auftrag> auftraege =
-                auftragRepository.alleFinden();
-
-        return auftraege.stream()
-                .map(this::erstelleResponse)
-                .toList();
     }
 
     public AuftragResponse findeNachId(Long id) {
@@ -124,6 +115,22 @@ public class AuftragService {
         auftrag.setMaschine(maschine);
 
         return erstelleResponse(auftrag);
+    }
+
+    public List<AuftragResponse> filtern(
+            AuftragsStatus status,
+            Long maschineId
+    ) {
+
+        List<Auftrag> auftraege =
+                auftragRepository.filtern(
+                        status,
+                        maschineId
+                );
+
+        return auftraege.stream()
+                .map(this::erstelleResponse)
+                .toList();
     }
 
     private AuftragResponse erstelleResponse(Auftrag auftrag) {

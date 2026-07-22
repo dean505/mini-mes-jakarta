@@ -2,6 +2,7 @@ package de.denis.mes.resource;
 
 import de.denis.mes.dto.AuftragErstellenRequest;
 import de.denis.mes.dto.AuftragResponse;
+import de.denis.mes.entity.AuftragsStatus;
 import de.denis.mes.service.AuftragService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -33,10 +34,16 @@ public class AuftragResource {
     }
 
     @GET
-    public Response findeAlle() {
+    public Response filtern(
+            @QueryParam("status") AuftragsStatus status,
+            @QueryParam("maschineId") Long maschineId
+    ) {
 
         List<AuftragResponse> auftraege =
-                auftragService.findeAlle();
+                auftragService.filtern(
+                        status,
+                        maschineId
+                );
 
         return Response
                 .ok(auftraege)
