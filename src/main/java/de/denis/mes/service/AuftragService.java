@@ -119,13 +119,30 @@ public class AuftragService {
 
     public List<AuftragResponse> filtern(
             AuftragsStatus status,
-            Long maschineId
+            Long maschineId,
+            int page,
+            int size
     ) {
+
+        if (page < 0) {
+            throw new IllegalArgumentException(
+                    "Page darf nicht negativ sein"
+            );
+        }
+
+        if (size < 1 || size > 100) {
+            throw new IllegalArgumentException(
+                    "Size muss zwischen 1 und 100 liegen"
+            );
+        }
+
 
         List<Auftrag> auftraege =
                 auftragRepository.filtern(
                         status,
-                        maschineId
+                        maschineId,
+                        page,
+                        size
                 );
 
         return auftraege.stream()

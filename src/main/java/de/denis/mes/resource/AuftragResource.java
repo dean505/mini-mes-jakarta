@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.DefaultValue;
 
 import java.util.List;
 
@@ -36,13 +37,17 @@ public class AuftragResource {
     @GET
     public Response filtern(
             @QueryParam("status") AuftragsStatus status,
-            @QueryParam("maschineId") Long maschineId
+            @QueryParam("maschineId") Long maschineId,
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("size") @DefaultValue("10") int size
     ) {
 
         List<AuftragResponse> auftraege =
                 auftragService.filtern(
                         status,
-                        maschineId
+                        maschineId,
+                        page,
+                        size
                 );
 
         return Response

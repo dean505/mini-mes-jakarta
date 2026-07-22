@@ -25,7 +25,9 @@ public class AuftragRepository {
 
     public List<Auftrag> filtern(
             AuftragsStatus status,
-            Long maschineId
+            Long maschineId,
+            int page,
+            int size
     ) {
 
         StringBuilder jpql = new StringBuilder(
@@ -54,6 +56,9 @@ public class AuftragRepository {
         if (maschineId != null) {
             query.setParameter("maschineId", maschineId);
         }
+
+        query.setFirstResult(page * size);
+        query.setMaxResults(size);
 
         return query.getResultList();
     }
