@@ -11,6 +11,7 @@ import de.denis.mes.repository.MaschineRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import de.denis.mes.dto.AuftragPageResponse;
 
 import java.util.List;
 
@@ -117,7 +118,7 @@ public class AuftragService {
         return erstelleResponse(auftrag);
     }
 
-    public List<AuftragResponse> filtern(
+    public AuftragPageResponse filtern(
             AuftragsStatus status,
             Long maschineId,
             int page,
@@ -136,7 +137,6 @@ public class AuftragService {
             );
         }
 
-
         List<Auftrag> auftraege =
                 auftragRepository.filtern(
                         status,
@@ -145,9 +145,29 @@ public class AuftragService {
                         size
                 );
 
-        return auftraege.stream()
-                .map(this::erstelleResponse)
-                .toList();
+        List<AuftragResponse> content =
+                auftraege.stream()
+                        .map(this::erstelleResponse)
+                        .toList();
+
+        long totalElements =
+                auftragRepository.zaehlen(
+                        status,
+                        maschineId
+                );
+
+        int totalPages =
+                (int) Math.ceil(
+                        (double) totalElements / size
+                );
+
+        return new AuftragPageResponse(
+                content,
+                page,
+                size,
+                totalElements,
+                totalPages
+        );
     }
 
     private AuftragResponse erstelleResponse(Auftrag auftrag) {

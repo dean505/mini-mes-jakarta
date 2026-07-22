@@ -10,6 +10,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.DefaultValue;
+import de.denis.mes.dto.AuftragPageResponse;
 
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class AuftragResource {
             @QueryParam("size") @DefaultValue("10") int size
     ) {
 
-        List<AuftragResponse> auftraege =
+        AuftragPageResponse response =
                 auftragService.filtern(
                         status,
                         maschineId,
@@ -51,7 +52,7 @@ public class AuftragResource {
                 );
 
         return Response
-                .ok(auftraege)
+                .ok(response)
                 .build();
     }
 

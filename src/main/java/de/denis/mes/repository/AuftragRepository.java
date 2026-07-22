@@ -63,6 +63,39 @@ public class AuftragRepository {
         return query.getResultList();
     }
 
+    public long zaehlen(
+            AuftragsStatus status,
+            Long maschineId
+    ) {
+
+        StringBuilder jpql = new StringBuilder(
+                "SELECT COUNT(a) FROM Auftrag a WHERE 1 = 1"
+        );
+
+        if (status != null) {
+            jpql.append(" AND a.status = :status");
+        }
+
+        if (maschineId != null) {
+            jpql.append(" AND a.maschine.id = :maschineId");
+        }
+
+        TypedQuery<Long> query = entityManager.createQuery(
+                jpql.toString(),
+                Long.class
+        );
+
+        if (status != null) {
+            query.setParameter("status", status);
+        }
+
+        if (maschineId != null) {
+            query.setParameter("maschineId", maschineId);
+        }
+
+        return query.getSingleResult();
+    }
+
     public void loeschen(Auftrag auftrag) {
         entityManager.remove(auftrag);
     }
