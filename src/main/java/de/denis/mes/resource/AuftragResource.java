@@ -40,7 +40,9 @@ public class AuftragResource {
             @QueryParam("status") AuftragsStatus status,
             @QueryParam("maschineId") Long maschineId,
             @QueryParam("page") @DefaultValue("0") int page,
-            @QueryParam("size") @DefaultValue("10") int size
+            @QueryParam("size") @DefaultValue("10") int size,
+            @QueryParam("sort") @DefaultValue("id") String sort,
+            @QueryParam("direction") @DefaultValue("asc") String direction
     ) {
 
         AuftragPageResponse response =
@@ -48,7 +50,9 @@ public class AuftragResource {
                         status,
                         maschineId,
                         page,
-                        size
+                        size,
+                        sort,
+                        direction
                 );
 
         return Response

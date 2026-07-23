@@ -27,7 +27,9 @@ public class AuftragRepository {
             AuftragsStatus status,
             Long maschineId,
             int page,
-            int size
+            int size,
+            String sort,
+            String direction
     ) {
 
         StringBuilder jpql = new StringBuilder(
@@ -42,7 +44,10 @@ public class AuftragRepository {
             jpql.append(" AND a.maschine.id = :maschineId");
         }
 
-        jpql.append(" ORDER BY a.id");
+        jpql.append(" ORDER BY a.")
+                .append(sort)
+                .append(" ")
+                .append(direction);
 
         TypedQuery<Auftrag> query = entityManager.createQuery(
                 jpql.toString(),

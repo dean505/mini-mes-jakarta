@@ -122,7 +122,9 @@ public class AuftragService {
             AuftragsStatus status,
             Long maschineId,
             int page,
-            int size
+            int size,
+            String sort,
+            String direction
     ) {
 
         if (page < 0) {
@@ -137,12 +139,37 @@ public class AuftragService {
             );
         }
 
+        List<String> erlaubteSortierfelder = List.of(
+                "id",
+                "bezeichnung",
+                "stueckzahl",
+                "status"
+        );
+
+        if (!erlaubteSortierfelder.contains(sort)) {
+            throw new IllegalArgumentException(
+                    "Ungueltiges Sortierfeld"
+            );
+        }
+
+        if (!direction.equalsIgnoreCase("asc")
+                && !direction.equalsIgnoreCase("desc")) {
+
+            throw new IllegalArgumentException(
+                    "Sortierrichtung muss asc oder desc sein"
+            );
+        }
+
+        String sortDirection = direction.toUpperCase();
+
         List<Auftrag> auftraege =
                 auftragRepository.filtern(
                         status,
                         maschineId,
                         page,
-                        size
+                        size,
+                        sort,
+                        sortDirection
                 );
 
         List<AuftragResponse> content =
